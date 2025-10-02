@@ -1,66 +1,47 @@
 from transformers import pipeline
-import torch
+import nltk
+from nltk.tokenize import sent_tokenize
 
-# Optional: Enable GPU for faster inference (Colab provides free GPU: Runtime > Change runtime type > GPU).
-device = 0 if torch.cuda.is_available() else -1  # Use GPU if available.
-
-# Load the summarization model (BART-large-CNN: Good for news/articles).
-print("Loading summarization model... (This may take a minute on first run.)")
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn", device=device)
-
-def generate_summary(text, max_length=130, min_length=30, do_sample=False):
-    """
-    Generate a summary of the input text using the HF model.
-    - text: Input string.
-    - max_length/min_length: Control summary length.
-    """
-    if len(text.strip()) == 0:
-        return "No input text provided."
+def summarize_text(text, max_length=150, min_length=30):
+    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
     
-    # Truncate if too long (model limit ~1024 tokens).
-    if len(text) > 1000:
-        text = text[:1000] + "\n... (text truncated for summarization)"
-    
-    try:
-        summary = summarizer(text, max_length=max_length, min_length=min_length, do_sample=do_sample)
-        return summary[0]['summary_text']
-    except Exception as e:
-        return f"Error generating summary: {e}"
-
-# Step 1: Accept input text (interactive or from file).
-print("Enter your text to summarize (or paste short text and press Enter):")
-input_text = input().strip()
-
-# Optional: Upload a file for longer text.
-from google.colab import files
-print("\nWould you like to upload a .txt or .docx file instead? (y/n)")
-choice = input().lower()
-if choice == 'y':
-    uploaded = files.upload()
-    filename = list(uploaded.keys())[0]
-    if filename.endswith('.txt'):
-        with open(filename, 'r') as f:
-            input_text = f.read().strip()
-    elif filename.endswith('.docx'):
-        # Requires python-docx for .docx extraction.
-        !pip install python-docx
-        from docx import Document
-        doc = Document(filename)
-        input_text = '\n'.join([p.text for p in doc.paragraphs]).strip()
+    if len(text.split()) > 1024:
+        sentences = sent_tokenize(text)
+        chunks = []
+        current_chunk = []
+        current_length = 0
+        
+        for sentence in sentences:
+            sentence_length = len(sentence.split())
+            if current_length + sentence_length <= 800:
+                current_chunk.append(sentence)
+                current_length += sentence_length
+            else:
+                chunks.append(" ".join(current_chunk))
+                current_chunk = [sentence]
+                current_length = sentence_length
+        
+        if current_chunk:
+            chunks.append(" ".join(current_chunk))
+        
+        summaries = []
+        for chunk in chunks:
+            summary = summarizer(chunk, max_length=max_length, min_length=min_length, do_sample=False)
+            summaries.append(summary[0]['summary_text'])
+        
+        if len(summaries) > 1:
+            combined_text = " ".join(summaries)
+            final_summary = summarizer(combined_text, max_length=max_length, min_length=min_length, do_sample=False)
+            return final_summary[0]['summary_text']
+        else:
+            return summaries[0]
     else:
-        print("Unsupported file type. Using manual input.")
-else:
-    print("Using manual input.")
+        summary = summarizer(text, max_length=max_length, min_length=min_length, do_sample=False)
+        return summary[0]['summary_text']
 
-print(f"\nInput text (first 200 chars): {input_text[:200]}...")
+# Get input text
+input_text = input("Paste your text here: ")
 
-# Step 2: Generate summary.
-summary = generate_summary(input_text)
-print(f"\nGenerated Summary:\n{summary}")
-
-# Step 3: Save and download summary as .txt.
-output_file = 'summary.txt'
-with open(output_file, 'w') as f:
-    f.write(f"Original Text (truncated):\n{input_text[:500]}...\n\nSummary:\n{summary}")
-files.download(output_file)
-print(f"\nSummary saved to {output_file} and downloaded.")
+# Generate summary
+summary = summarize_text(input_text)
+print("\nSummary:", summary)

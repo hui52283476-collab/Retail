@@ -1,47 +1,45 @@
 from transformers import pipeline
-import nltk
-from nltk.tokenize import sent_tokenize
+import warnings
+warnings.filterwarnings('ignore')  # Suppress model loading warnings
 
-def summarize_text(text, max_length=150, min_length=30):
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+def summarize_text(text):
+    """
+    Summarizes text using a local AI model
+    Args:
+        text (str): Input text to summarize
+    Returns:
+        str: Generated summary
+    """
+    # Initialize summarizer (will download model ~1.5GB first time)
+    summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
     
-    if len(text.split()) > 1024:
-        sentences = sent_tokenize(text)
-        chunks = []
-        current_chunk = []
-        current_length = 0
-        
-        for sentence in sentences:
-            sentence_length = len(sentence.split())
-            if current_length + sentence_length <= 800:
-                current_chunk.append(sentence)
-                current_length += sentence_length
-            else:
-                chunks.append(" ".join(current_chunk))
-                current_chunk = [sentence]
-                current_length = sentence_length
-        
-        if current_chunk:
-            chunks.append(" ".join(current_chunk))
-        
-        summaries = []
-        for chunk in chunks:
-            summary = summarizer(chunk, max_length=max_length, min_length=min_length, do_sample=False)
-            summaries.append(summary[0]['summary_text'])
-        
-        if len(summaries) > 1:
-            combined_text = " ".join(summaries)
-            final_summary = summarizer(combined_text, max_length=max_length, min_length=min_length, do_sample=False)
-            return final_summary[0]['summary_text']
-        else:
-            return summaries[0]
-    else:
-        summary = summarizer(text, max_length=max_length, min_length=min_length, do_sample=False)
-        return summary[0]['summary_text']
+    # Chunk long text to avoid model limitations
+    max_chunk = 1024
+    text_chunks = [text[i:i+max_chunk] for i in range(0, len(text), max_chunk)]
+    
+    summaries = []
+    for chunk in text_chunks:
+        summary = summarizer(chunk, 
+                            max_length=150, 
+                            min_length=30, 
+                            do_sample=False)[0]['summary_text']
+        summaries.append(summary)
+    
+    return " ".join(summaries)
 
-# Get input text
-input_text = input("Paste your text here: ")
+def main():
+    print("📝 Local Text Summarizer (100% offline after setup)")
+    input_text = input("Enter text to summarize:\n> ")
+    
+    if not input_text.strip():
+        print("❌ No text entered!")
+        return
+    
+    print("\n⚡ Generating summary (may take 1 minute first time)...")
+    summary = summarize_text(input_text)
+    print("\n📖 Summary:")
+    print(summary)
 
-# Generate summary
-summary = summarize_text(input_text)
-print("\nSummary:", summary)
+if __name__ == "__main__":
+    main()
+

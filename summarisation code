@@ -1,10 +1,11 @@
 import requests
 import json
 
+
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
-OPENROUTER_API_KEY = "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"  
+OPENROUTER_API_KEY = "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" 
 
 # Choose a model (free options available; see https://openrouter.ai/models for more)
 MODEL = "google/gemma-2-9b-it:free"  # Free model that works well for summarization; alternatives: "meta-llama/llama-3.1-8b-instruct:free"

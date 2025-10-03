@@ -1,0 +1,31 @@
+url = "https://openrouter.ai/api/v1/chat/completions"
+prompt = f"""
+
+
+請用中文摘要以下內容，重點主要事件、人物、結論，控制在100字內。用 bullet points。 原文：{transcription} """
+data = {
+    "model": llm_model,
+    "messages": [{"role": "user", "content": prompt}],
+    "max_tokens": 150
+}
+
+# 修復編碼：ensure_ascii=False
+json_data = json.dumps(data, ensure_ascii=False)
+req = urllib.request.Request(url, data=json_data.encode('utf-8'), method='POST')
+req.add_header('Authorization', f'Bearer {api_key}')
+req.add_header('Content-Type', 'application/json')
+
+try:
+    with urllib.request.urlopen(req) as response:
+        result = json.loads(response.read().decode('utf-8'))
+        summary = result['choices'][0]['message']['content'].strip()
+        print(f"摘要結果（模型：{llm_model}）：\n{summary}")
+        return summary
+except urllib.error.HTTPError as e:
+    error_body = e.read().decode('utf-8') if e.file else '無詳細'
+    print(f"HTTP 錯誤：{e.code} - {e.reason}")
+    print(f"詳細錯誤訊息：{error_body}")
+    return "失敗"
+except Exception as e:
+    print(f"其他錯誤：{e}")
+    return "失敗"

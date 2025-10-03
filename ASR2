@@ -1,1 +1,54 @@
+import os
+os.environ['OPENROUTER_API_KEY'] = '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'  # 這裡改你的 OpenRouter key（從 dashboard copy）
 
+import urllib.request
+import json
+import os
+
+def llm_summarize(transcription, llm_model='x-ai/grok-4-fast:free'):  # 換穩定免費模型 (2025 熱門)
+    api_key = os.environ.get('OPENROUTER_API_KEY')
+    if not api_key:
+        print("API key 失敗！檢查 Cell 1。")
+        return "失敗"
+    
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    prompt = f"""
+請用中文摘要以下內容，重點主要事件、人物、結論，控制在100字內。用 bullet points。
+原文：{transcription}
+"""
+
+    data = {
+        "model": llm_model,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 150
+    }
+
+    # 修復編碼：ensure_ascii=False
+    json_data = json.dumps(data, ensure_ascii=False)
+    req = urllib.request.Request(url, data=json_data.encode('utf-8'), method='POST')
+    req.add_header('Authorization', f'Bearer {api_key}')
+    req.add_header('Content-Type', 'application/json')
+
+    try:
+        with urllib.request.urlopen(req) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            summary = result['choices'][0]['message']['content'].strip()
+            print(f"摘要結果（模型：{llm_model}）：\n{summary}")
+            return summary
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode('utf-8') if e.file else '無詳細'
+        print(f"HTTP 錯誤：{e.code} - {e.reason}")
+        print(f"詳細錯誤訊息：{error_body}")
+        return "失敗"
+    except Exception as e:
+        print(f"其他錯誤：{e}")
+        return "失敗"
+
+# 測試文字
+test_transcription = "這是一段測試 ASR 轉錄文字。老師講了 ASR 工具和 LLM 摘要的組合測試。重點是 pipeline，從音頻到摘要，不用 WER，只看品質。用了 2 個 ASR 和人類轉錄作為參考。"
+print(f"測試 transcript：{test_transcription}")
+
+summary = llm_summarize(test_transcription)
+with open('/content/summary.txt', 'w', encoding='utf-8') as f:
+    f.write(f"測試原文：\n{test_transcription}\n\n摘要：\n{summary}")
+print("完成！下載 summary.txt 檢查。")

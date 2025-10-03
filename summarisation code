@@ -1,45 +1,82 @@
-from transformers import pipeline
-import warnings
-warnings.filterwarnings('ignore')  # Suppress model loading warnings
+import requests
+import json
 
-def summarize_text(text):
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+
+OPENROUTER_API_KEY = "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"  
+
+# Choose a model (free options available; see https://openrouter.ai/models for more)
+MODEL = "google/gemma-2-9b-it:free"  # Free model that works well for summarization; alternatives: "meta-llama/llama-3.1-8b-instruct:free"
+
+def summarize_text(text, max_tokens=200):
     """
-    Summarizes text using a local AI model
+    Summarizes the input text using OpenRouter's API.
+    
     Args:
-        text (str): Input text to summarize
+    text (str): The input text to summarize.
+    max_tokens (int): Maximum tokens for the summary (default: 200).
+    
     Returns:
-        str: Generated summary
+    str: The generated summary, or an error message if the request fails.
     """
-    # Initialize summarizer (will download model ~1.5GB first time)
-    summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+    if not text.strip():
+        return "No input text provided."
     
-    # Chunk long text to avoid model limitations
-    max_chunk = 1024
-    text_chunks = [text[i:i+max_chunk] for i in range(0, len(text), max_chunk)]
+    # Prompt for summarization
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a helpful summarizer. Provide a concise summary of the given text, capturing the main points without unnecessary details."
+        },
+        {
+            "role": "user",
+            "content": f"Summarize the following text:\n\n{text}"
+        }
+    ]
     
-    summaries = []
-    for chunk in text_chunks:
-        summary = summarizer(chunk, 
-                            max_length=150, 
-                            min_length=30, 
-                            do_sample=False)[0]['summary_text']
-        summaries.append(summary)
+    # Prepare the payload (OpenAI-compatible format)
+    payload = {
+        "model": MODEL,
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "temperature": 0.3  # Low temperature for factual, consistent summaries
+    }
     
-    return " ".join(summaries)
+    # Headers
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "",  # Optional: Your app's URL (e.g., for leaderboard)
+        "X-Title": ""  # Optional: Your app's name
+    }
+    
+    try:
+        response = requests.post(API_URL, headers=headers, json=payload)
+        response.raise_for_status()  # Raise an error for bad status codes
+        
+        result = response.json()
+        
+        # Extract the summary from the response
+        if 'choices' in result and len(result['choices']) > 0:
+            return result['choices'][0]['message']['content'].strip()
+        else:
+            return f"Unexpected response: {json.dumps(result, indent=2)}"
+    
+    except requests.exceptions.RequestException as e:
+        return f"Error calling API: {str(e)}"
+    except json.JSONDecodeError as e:
+        return f"Error parsing response: {str(e)}"
+    except KeyError as e:
+        return f"Error in response structure: {str(e)}"
 
-def main():
-    print("📝 Local Text Summarizer (100% offline after setup)")
-    input_text = input("Enter text to summarize:\n> ")
-    
-    if not input_text.strip():
-        print("❌ No text entered!")
-        return
-    
-    print("\n⚡ Generating summary (may take 1 minute first time)...")
-    summary = summarize_text(input_text)
-    print("\n📖 Summary:")
-    print(summary)
-
+# Main script to run in Google Colab
 if __name__ == "__main__":
-    main()
-
+    # Get input text from user
+    input_text = input("Enter the text to summarize: ")
+    
+    # Generate summary
+    summary = summarize_text(input_text)
+    
+    print("\nSummary:")
+    print(summary)

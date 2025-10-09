@@ -1,5 +1,5 @@
 import os
-os.environ['OPENROUTER_API_KEY'] = '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'  # 貼你的 key
+os.environ['OPENROUTER_API_KEY'] = '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'  # 貼你的 key
 import requests
 import os
 

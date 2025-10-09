@@ -1,0 +1,52 @@
+import os
+os.environ['OPENROUTER_API_KEY'] = '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'  # 貼你的 key
+import requests
+import os
+
+def llm_summarize(transcription, llm_model='meta-llama/llama-4-maverick:free'):  # 最新免費模型 (2025 4 月發布)
+    api_key = os.environ.get('OPENROUTER_API_KEY')
+    if not api_key:
+        print("API key 失敗！檢查 Cell 1。")
+        return "失敗"
+    
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    prompt = f"""
+請用中文摘要以下內容，重點主要事件、人物、結論，控制在100字內。用 bullet points。
+原文：{transcription}
+"""
+
+    data = {
+        "model": llm_model,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 150
+    }
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        result = response.json()
+        summary = result['choices'][0]['message']['content'].strip()
+        print(f"摘要結果：\n{summary}")
+        return summary
+    except requests.exceptions.RequestException as e:
+        print(f"請求錯誤：{e}")
+        return "失敗"
+    except Exception as e:
+        print(f"其他錯誤：{e}")
+        return "失敗"
+
+# 讀檔案
+input_file = '/content/NOTTA_gen.txt'  # 你的檔案
+with open(input_file, 'r', encoding='utf-8') as f:
+    transcription = f.read().strip()
+print(f"讀取 transcript：{transcription[:100]}...")
+
+summary = llm_summarize(transcription)
+with open('/content/summary.txt', 'w', encoding='utf-8') as f:
+    f.write(f"原文：\n{transcription}\n\n摘要：\n{summary}")
+print("完成！下載 summary.txt")

@@ -5,7 +5,7 @@ import json
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 
-OPENROUTER_API_KEY = "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" 
+OPENROUTER_API_KEY = "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" 
 
 # Choose a model (free options available; see https://openrouter.ai/models for more)
 MODEL = "google/gemma-2-9b-it:free"  # Free model that works well for summarization; alternatives: "meta-llama/llama-3.1-8b-instruct:free"

@@ -6,7 +6,7 @@ import json
 
 # OpenRouter API configuration
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 MODEL = "google/gemma-2-9b-it:free"
 
 def read_docx(file_path):

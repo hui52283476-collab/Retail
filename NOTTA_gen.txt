@@ -1,0 +1,39 @@
+
+
+就係。我哋係海有幾個，好似唔得試嚇好呀。幫我試過保險好呀。快啲去。肚唔肚餓，快啲呀，我想用你哋。然之後誒ASL然之後就summerization跟住誒個pipeline就係跟住根據summiration station result誒再match KPI嘛，或者係match其他嘢咁個個概念係咁啦，有3部分。
+
+
+咁誒，我就誒同。即係其中一啲company嚟傾啦，跟住哇嗰啲policy straight到咧佢有10萬result，但係佢唔可以俾錄音我哋啦唔可以俾錄音transcript都唔會得我哋咁誒咁變咗咧誒誒個KPI table咧佢亦都唔可以俾個詳細嘅KPI table嘅。
+
+
+咁誒就就變咗有好多uncertainty啦，但係anyway誒，我哋而家唔使考慮呢啲嘢住我哋，而家考慮嘅係點樣砌一個pipeline，到時有嘅話，我哋可以即刻用係嘛咁，如果係咁樣嘅話，咧誒咁。我就睇下你哋嘅意見，因為你知道有三part係有三大part，每一part其實都大，即係ASR，甚至乎係transcript係啦。
+
+
+然之後再match table即係三樣，而家係大，咁你哋會想係三角集中做一個大家去free explore啊。好似其實集中，我又驚唔夠全面，即係即係你？會唔會好似？做到幾多得幾多啲咁誒一個去做speech誒，即係我，如果你有錄音啊，更加好啦，你有錄音嘅話，我哋自己有data，即係可以test住先，即係有啲template可以Run下先。
+
+
+即係因為公司嗰啲requirement啊，個個都俾到，即係唔知俾到點樣，但係anyway我哋就有啲嘢搵下先，然之後就溫完之後跟住我哋又做Note taking啊嘛，做Note taking然之後誒，再再match下progress囉咁啊哦，我哋自己做咗份嘢出嚟咁，再睇下到時做俾你data one睇one搵到底咁就簡單啲啦咁誒。
+
+
+咁就三part咯誒我自己有建議啦誒summarization同transfer係要一齊evaluate，如果係冇意義，咁但係因為你冇理由對。對嗰個transfer嗰個字有幾多㗎嘛，你一定係睇下有冇重點踢唔剔到，即係誒誒咁，所以誒，所以就係誒，我哋咁樣開會有錄音，然之後有錄音跟住你哋take A key point啦咁，講咗大張堆廢話，咁樣你睇下個transcri誒個summer最屘唔同嘅combination唔同嘅combination之後，因為佢係ASL唔同tools啦，然之後再send去誒唔同嘅summarization tools，即係唔同嘅LM。
+
+
+然之後最屘就有個誒civilization嘅result出嚟啦咁啊對嗰啲summation result同同同你自己人手嗰啲result對下，睇下佢準係唔夠啦，即係誒誒，即係resign定risk咯就係咁咯誒咁變咗咧。
+
+
+誒呢個係一個experiment嚟嘅你clearly係見到佢誒都冇guarantee都唔知可以做得幾好嘅啦？誒係，其實係得一個誒，得得個PR嗰個use case係有guarantee嘅啫誒咁which is good啦冇guarantee就冇expectation咁睇咗幾時誒誒？
+
+
+咁喺呢個情況下咧，我哋要整個pipeline，我哋要整個誒就誒。入audio file嘅入audio file，再之後convert to transcript再將呢啲transcript再send去唔同嘅LOLM然之後就final誒，做咗個誒surprise temperature出嚟呢個係Seven one係啦，我哋要有個part line。
+
+
+咁我哋focus翻，跟住之後嗰個，就之後先搞囉睇下重唔重要嘅事故嚇好咁嘅話，你哋諗住誒邊個去砌嗱？即係。點樣即係又又係又係嗱嗱用唔同嘅summarization tools誒誒用用唔同嘅audio file先啊，即係有個audio file，點樣將個transfer出嚟係一個target嚟嘅，尤其係搵個人做，然之後將呢啲transfer抌去唔同嘅LOM度再return翻嚟啲結果另外一個task嘅係啦咁第3個task咧就係。
+
+
+整一嚿auto metric去matur呢啲結果with你人手間噏市第3個class 1233個pass，睇下邊個做？咁即係個audio係咩audio都得就呢個audio音樂？冇啊。一部機啦good，即係你話呢個做呢個做囉，做完先啦。
+
+
+應該廣東話佢都未得唔得㗎？咩話廣東話廣東話得㗎嘛廣東話得咪事囉。我同你講會好會好啲。有個叫capital CL，佢嘅廣東話，佢叫做人哋都係持有其他嘢，因為講廣東話亦係其中一個導演嘅嘢。噉我哋自己再傾啦嗯噉我阿媽返低先。
+
+
+我大概都OK嘅。

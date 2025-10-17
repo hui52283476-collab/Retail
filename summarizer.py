@@ -6,11 +6,10 @@ import json
 
 # OpenRouter API configuration
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 MODEL = "google/gemma-2-9b-it:free"
 
 def read_docx(file_path):
-    """Read the text from a DOCX file."""
     try:
         if not os.path.exists(file_path):
             return None, f"File '{file_path}' does not exist."
@@ -24,31 +23,24 @@ def read_docx(file_path):
         return None, f"Error reading DOCX file: {str(e)}"
 
 def summarize_text(text, max_tokens=200):
-    """
-    Summarizes the input text using OpenRouter's API.
-    
-    Args:
-        text (str): The input text to summarize.
-        max_tokens (int): Maximum tokens for the summary (default: 200).
-    
-    Returns:
-        str: The generated summary, or an error message if the request fails.
-    """
     if not text or not text.strip():
         return "No input text provided for summarization."
+    
+    # TRUNCATE TEXT - Free tier can't handle 2045 chars!
+    if len(text) > 1000:
+        text = text[:1000] + "\n\n[Text truncated for API limits]"
     
     messages = [
         {
             "role": "system",
             "content": (
-                "You are an expert summarizer. Your task is to create a concise and accurate summary of the provided text. "
-                "Focus on the main ideas and key points, omitting minor details. Ensure the summary is clear, coherent, "
-                "and captures the essence of the text in 50-200 words."
+                "You are an expert summarizer. Create a concise summary (50-150 words) "
+                "of the provided text. Focus on main ideas only."
             )
         },
         {
             "role": "user",
-            "content": f"Please summarize the following text:\n\n{text}"
+            "content": f"Summarize:\n\n{text}"
         }
     ]
     
@@ -62,27 +54,34 @@ def summarize_text(text, max_tokens=200):
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "",  # Optional: Your app's URL
-        "X-Title": ""  # Optional: Your app's name
+        "HTTP-Referer": "https://localhost",
+        "X-Title": "Docx Summarizer"
     }
+    
     
     try:
         response = requests.post(API_URL, headers=headers, json=payload)
-        response.raise_for_status()
+        
         
         result = response.json()
         
         if 'choices' in result and len(result['choices']) > 0:
-            return result['choices'][0]['message']['content'].strip()
+            summary = result['choices'][0]['message']['content'].strip()
+            print(f"✨ Raw summary length: {len(summary)} chars")
+            return summary
         else:
-            return f"Unexpected API response: {json.dumps(result, indent=2)}"
+            print(f"❌ No choices in response: {json.dumps(result, indent=2)}")
+            return f"Unexpected response: {json.dumps(result, indent=2)}"
     
     except requests.exceptions.RequestException as e:
-        return f"Error calling API: {str(e)}"
+        print(f"🌐 Network error: {str(e)}")
+        return f"Network error: {str(e)}"
     except json.JSONDecodeError as e:
-        return f"Error parsing API response: {str(e)}"
-    except KeyError as e:
-        return f"Error in API response structure: {str(e)}"
+        print(f"🔧 JSON error: {str(e)}")
+        return f"JSON error: {str(e)}"
+    except Exception as e:
+        print(f"💥 Unexpected error: {str(e)}")
+        return f"Error: {str(e)}"
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -99,6 +98,9 @@ if __name__ == "__main__":
         print(error)
         sys.exit(1)
     
-    print(f"\nTotal characters extracted: {len(text)}")
+    print(f"\n📄 Total characters extracted: {len(text)}")
+    
+    
     summary = summarize_text(text)
-    print("\nSummary:\n", summary)
+    print("📄 SUMMARY")
+    print(summary)

@@ -228,3 +228,5 @@ def transcribe_audio(audio_path=None, use_mic=False, language="zh-TW"):  # zh-TW
 if __name__ == "__main__":
     # 測試文件：transcribe_audio(audio_path="sample.wav")
    print(transcribe_audio(audio_path="sample.wav", language="zh-TW"))
+
+

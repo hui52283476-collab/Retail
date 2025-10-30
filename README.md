@@ -37,3 +37,5 @@ If you have a .docx file with meeting notes, this script:
 - Reads the content.
 - Sends it to an AI summarizer.
 - Returns a concise summary focusing on key points and decisions.
+
+

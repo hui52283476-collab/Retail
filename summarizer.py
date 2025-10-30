@@ -9,8 +9,16 @@ API_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_API_KEY = "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"
 
 MODELS = [
-    {"name": "Gemma-2", "id": "google/gemma-2-9b-it:free"},
-    {"name": "Mistral", "id": "mistralai/mistral-7b-instruct:free"}
+    {"name": "1.Gemma-2", "id": "google/gemma-2-9b-it:free"},
+    {"name": "2.Mistral", "id": "mistralai/mistral-7b-instruct:free"},
+    {"name": "3.Microsoft", "id": "qwen/qwen3-coder:free",},
+    {"name": "4.Meta", "id": "meta-llama/llama-3.3-70b-instruct:free"},
+    {"name": "5.Mgpt-oss-20b ", "id": "openai/gpt-oss-20b:free"},
+    {"name": "6.Venice", "id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free"},
+    {"name": "7.Mistral Nemo", "id": "mistralai/mistral-nemo:free"},
+    {"name": "8.Shisa AI", "id": "shisa-ai/shisa-v2-llama3.3-70b:free"},
+    {"name": "9.NVIDIA", "id": "nvidia/nemotron-nano-9b-v2:free"}, 
+    {"name": "10.MoonshotAI", "id": "moonshotai/kimi-dev-72b:free"}
 ]
 
 def read_docx(file_path):

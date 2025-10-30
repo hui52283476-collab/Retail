@@ -18,7 +18,7 @@ MODELS = [
     {"name": "7.Mistral Nemo", "id": "mistralai/mistral-nemo:free"},
     {"name": "8.Shisa AI", "id": "shisa-ai/shisa-v2-llama3.3-70b:free"},
     {"name": "9.NVIDIA", "id": "nvidia/nemotron-nano-9b-v2:free"}, 
-    {"name": "10.MoonshotAI", "id": "moonshotai/kimi-dev-72b:free"}
+    {"name": "10.MoonshotAI", "id": "moonshotai/kimi-dev-72b:free"},
 ]
 
 def read_docx(file_path):

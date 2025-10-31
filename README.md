@@ -39,3 +39,5 @@ If you have a .docx file with meeting notes, this script:
 - Returns a concise summary focusing on key points and decisions.
 
 
+What you need to install before running our code?
+[requirements.txt](https://github.com/user-attachments/files/23250104/requirements.txt)

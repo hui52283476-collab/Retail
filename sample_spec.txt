@@ -1,0 +1,12 @@
+Retail Specification Checklist:
+1. ASR Conversion: Audio to text using selected tools.
+2. Summarization: Generate point-form summary with LLM.
+3. Specification Matching: Extract checklist from PDF.
+4. Email Generation: Auto-draft follow-up email.
+5. Testing: Evaluate ASR + LLM combinations on 100 samples.
+6. Frontend Input: Support audio recording and upload.
+7. Backend Storage: Temporary files for 24 hours.
+8. Dynamic Selection: Select ASR/LLM from config.
+9. Coverage Display: Table with score and evidence.
+10. Security: Restricted access for admins.
+

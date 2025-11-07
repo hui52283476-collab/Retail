@@ -1,0 +1,46 @@
+# mini_main.py
+# 簡單測試總結（用之前 ASR 輸出 text），無 NLTK。
+
+from ASR import transcribe_audio  # import ASR
+
+def simple_summarization(text, num_sentences=2):
+    """
+    純 Python 總結：取前 N 句 + 關鍵詞。
+    """
+    if len(text.strip()) < 50:
+        return text + " (太短，無需總結)"
+    
+    # 分句（中文以 。 或 ？ 分）
+    sentences = [s.strip() for s in text.replace('？', '。').split('。') if s.strip()]
+    
+    # 簡單關鍵詞：取高頻詞句
+    words = [w for w in text.replace('，', ' ').split() if len(w) > 2]  # 粗糙分詞
+    key_words = set(words[:5])  # 前 5 高頻
+    
+    # 取 top N 句
+    top_sentences = sentences[:num_sentences]
+    summary = '。'.join(top_sentences) + '。關鍵：' + ' '.join(key_words)
+    return summary.strip()
+
+def main():
+    audio_path = "sample.wav"
+    language = "zh-TW"
+    print(f"開始轉錄 {audio_path}...")
+    transcription = transcribe_audio(audio_path=audio_path, language=language)
+    
+    print("轉錄文字：")
+    print(transcription)
+    
+    print("\n生成摘要...")
+    summary = simple_summarization(transcription, num_sentences=2)
+    print("摘要：")
+    print(summary)
+    
+    with open("transcription.txt", "w", encoding="utf-8") as f:
+        f.write("完整轉錄：\n" + transcription + "\n\n摘要：\n" + summary)
+    print("已儲存到 transcription.txt")
+
+if __name__ == "__main__":
+    main(){\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfacto

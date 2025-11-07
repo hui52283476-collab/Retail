@@ -1,0 +1,161 @@
+GROUP PROGRESS TRACKING REPORT
+============================================================
+
+TRANSCRIPT:
+你們那個最難，你們是retail,
+最難是你們。 Retail我剛剛confirm了，都蠻惡的，因為呢 … 呃
+…
+給不到詳細的KPI table有simplified table，我還在問，應該可以，但是要看怎 麼做。Summarization result是可以的，我可以肯定結果是很棒的。問題transcript給不到我們，我們有什麼做到呢？
+有幾件事要做的，如果是這個specific case，我們可以研究如何base on這些quality summarization result，用不同的LLM來猜原來的transcipt是怎樣。
+然後我們再發送給那邊的company，然後看看它可不可以加一些減一點。然後就砌一套evaluation data set出來，這個是我的想法，不過我講完整件事，其實 就因為這個是其中一部分，但整件事其實就是我們都是要設置pipeline，即是 我們要做這件事。
+設置pipeline就是receive audio, file，然後transcribe into text。
+所有人都在？在的
+問題就是 . . . 我們有幾個 . . . 好，試 試
+ASL，然後是summarization 接著pipeline就是根據summarization的result再 match KPI 或者是match其他東西，概念就是這樣，有三部分。
+我就跟其中一些公司傾，然後那些policy很strict，它有summarization result，但 它不可以給我們錄音，不可以給錄音，transcript都不能給我們，那KPI table亦 不能提供詳細的KPI table，但無論如何我們現在不用考慮這些，我們現在考慮的是如何弄一個pipeline，到時有的話我們可以馬上使用。
+如果是這樣的話，我就看你們的意見，因為你們知道有三大部分，每一部分其實都大，就是ASL , Summarization , Transcript 然後還有 match table，即是三個元 素在裡面，那你們會想在三個集中做一個，還是大家去 free explore一下不同 的東西？好像集中一個比較好，還是三個做三個比較好？
+好像集中的話不夠全面，每樣做一點，會不會好像… 做到多少就多少，每樣做一點，如果你有錄音就更加好，你有錄音的話，我們自己有數據。
+有些 template可以先測試一下，因為公司的規定不是每個人都可以提供。但無論如何我們都會先測試一下。因為我們會做notetaking，然後再match一下progress，我們會再做出來再測試一下，到時候的 data能不能run，這樣就簡單一點了。
+這樣就三部分，我建議summarization 和transcript 是要一齊的，因為沒意義的，因為你沒理由對transcript的字有多少，你一定是看重點能不能take。所以就是我們開會有個錄音，然後有個錄音，然後你們take了 key point，說了一大堆廢話，你們看一下transcript，最後不同的combination之後，因為它是ASR不同的工具，然後再發送到不同的summarization tools，即是不同的LLM，然後最後就有summarization的 result 出來，對比summarization result和人手的result，看看它準確還是不準確，即是risk on 還是risk off。
+這是一個experiment，你clearly地看到它沒有guarantee，也不知道可以做多少，其實只有PR的use case 是有guarantee 的，這是好事，沒有guarantee 就沒有expectation，在這個情況下我們要做一個pipeline，我們要做一個（），入 audio file，再之後convert to transcript，再將這些transcript再send去不同的LMN / LLM，然後就finally做了一個submission table出來。這個是step one，我們要有一個pipeline，我們focus這part，之後那個就之後才搞，看看還做不做得先。
+用不同的 summarization tools
+用不同的 audio file，即是有個audio file怎樣gen個transcript出來是一個task來的，隨便找個人做，然後將這些transcript扔去不同的L LM，再return回來的結果。另一個task來的，第三個task就是整一個auto metric去match這些結果會不 會人手write notes。第三個 task
+1 2 3，三個task看誰會做
+甚麼audio都可以？就這個audio吧，有沒有人錄音的？即是拿這個做？就拿這個做，先做著會好一點的，有一個叫（ ），廣東話可以出你也可以試試其他東西，因為廣東話是其中一個圖段。
+
+LLM SUMMARIES:
+
+1.Gemma-2:
+[API 404]
+
+2.Mistral:
+<s>
+
+3.Microsoft:
+- **ASR (Automatic Speech Recognition)**:  
+  - Converts audio to text; key component of the pipeline.  
+  - Challenges: No access to actual transcripts or audio from some companies due to privacy policies.  
+
+- **LLM (Large Language Models)**:  
+  - Used for summarization and potentially reconstructing transcripts.  
+  - Different LLMs will be tested to evaluate performance.  
+
+- **Pipeline**:  
+  - Consists of three main components: ASR → Summarization → KPI/Match Table.  
+  - Goal is to build an end-to-end system: audio input → transcription → summarization → evaluation.  
+
+- **KPI & Evaluation**:  
+  - Simplified KPI tables available; detailed ones restricted.  
+  - Evaluation based on summarization accuracy vs. manual notes.  
+
+- **Progress**:  
+  - Initial summarization results are promising.  
+  - Building evaluation dataset using simulated or partial data.  
+
+- **Challenges**:  
+  - Data access limitations (no audio/transcripts).  
+  - Unclear outcomes due to experimental nature.  
+  - Need for flexible, modular pipeline design.
+
+4.Meta:
+Here is a summary in 80-150 words, point form, covering ASR, LLM, pipeline, KPI, progress, and challenges:
+
+* **ASR (Automatic Speech Recognition)**: Transcribe audio files into text
+* **LLM (Large Language Model)**: Used for summarization
+* **Pipeline**: Receive audio files, transcribe into text, and summarize
+* **KPI (Key Performance Indicator)**: Measure the accuracy of summarization results
+* **Progress**: Setting up a pipeline to receive audio files, transcribe, and summarize
+* **Challenges**:
+	+ Limited access to detailed KPI tables and transcripts
+	+ Strict company policies on data sharing
+	+ Need to evaluate the accuracy of summarization results
+	+ Uncertainty about the effectiveness of different LLMs and ASR tools
+	+ Limited guarantee of success and uncertainty about the scope of the project
+
+5.Mgpt-oss-20b:
+- **ASR**: Audio files are first transcribed into text using multiple ASR engines; transcripts are not always available due to strict company policies.  
+- **LLM & Summarization**: Transcripts feed into several LLM‑based summarizers; results are compared against human‑generated summaries to gauge accuracy and risk.  
+- **Pipeline**:  
+  1. Receive audio → ASR → text.  
+  2. Summarize with LLMs.  
+  3. Match summarization output against KPI tables (simplified or detailed).  
+- **KPI**: Limited KPI tables are provided; the goal is to align summarization outcomes with key performance indicators, though exact metrics remain unclear.  
+- **Progress**: Initial experiments are underway; templates are being tested, and data collection is ongoing where possible.  
+- **Challenges**
+
+6.Venice:
+[API 429]
+
+7.Mistral Nemo:
+- **Automatic Speech Recognition (ASR)**: Transcribes audio files into text.
+- **Large Language Models (LLM)**: Used for summarization tasks.
+- **Pipeline**: Proposed process includes receiving audio, transcribing, summarizing, and matching results to KPIs.
+  - Three main parts: ASR, Summarization, Transcript Matching.
+- **Key Performance Indicators (KPIs)**: Not provided in detail by companies.
+- **Progress**: Current focus is on setting up the pipeline.
+- **Challenges**:
+  - Some companies restrict access to audio recordings and detailed KPI tables.
+  - Uncertainty about the extent to which the experiment can be successful.
+  - Dependent on available data and company policies.
+
+8.Shisa AI:
+[API 400]
+
+9.NVIDIA:
+- **ASR (Automatic Speech Recognition)**: Core component to convert audio files into text, essential for initiating the pipeline.  
+- **LLM (Large Language Models)**: Used for summarization tasks, analyzing transcribed text to extract key points, improving efficiency and accuracy.  
+- **Pipeline**: A three-part process: (1) Receive audio/file and transcribe (ASR), (2) Summarize via LLM models, (3) Match summaries/KPIs for evaluation.  
+- **KPI (Key Performance Indicators)**: Lack of detailed tables is a challenge; KPI matching depends on summarization quality and available data.  
+- **Progress**: Experiments underway to validate pipeline effectiveness (e.g., comparing LLM summaries vs. human summaries, testing with/without transcripts).  
+- **Challenges**:  
+  - Limited access to transcripts/audio due to strict company policies.  
+  - KPI data simplification risks incomplete evaluation.  
+  - Need to test multiple LLM tools and ASR systems for robustness.  
+  - Balancing focused pipeline development vs. parallel exploration of individual components.  
+  - Creating reliable evaluation datasets requires resource-intensive auditing of summaries and transcripts.  
+
+The goal is to build a scalable pipeline despite data restrictions, prioritizing summarization-LLM synergy while addressing policy and data gaps.
+
+10.MoonshotAI:
+[API 404]
+
+BEST SUMMARY (9.NVIDIA):
+- **ASR (Automatic Speech Recognition)**: Core component to convert audio files into text, essential for initiating the pipeline.  
+- **LLM (Large Language Models)**: Used for summarization tasks, analyzing transcribed text to extract key points, improving efficiency and accuracy.  
+- **Pipeline**: A three-part process: (1) Receive audio/file and transcribe (ASR), (2) Summarize via LLM models, (3) Match summaries/KPIs for evaluation.  
+- **KPI (Key Performance Indicators)**: Lack of detailed tables is a challenge; KPI matching depends on summarization quality and available data.  
+- **Progress**: Experiments underway to validate pipeline effectiveness (e.g., comparing LLM summaries vs. human summaries, testing with/without transcripts).  
+- **Challenges**:  
+  - Limited access to transcripts/audio due to strict company policies.  
+  - KPI data simplification risks incomplete evaluation.  
+  - Need to test multiple LLM tools and ASR systems for robustness.  
+  - Balancing focused pipeline development vs. parallel exploration of individual components.  
+  - Creating reliable evaluation datasets requires resource-intensive auditing of summaries and transcripts.  
+
+The goal is to build a scalable pipeline despite data restrictions, prioritizing summarization-LLM synergy while addressing policy and data gaps.
+
+SPEC COVERAGE: 7/12
+Covered: Instant audio recording, Upload audio, Upload transcript...
+Missing: Drag-and-drop, Display coverage score, Auto-generated follow-up email...
+
+FOLLOW-UP EMAIL:
+============================================================
+**Subject:** Progress Update – Group Pipeline (v1.1)
+
+**Dear Team,**
+
+I wanted to provide a quick update on the Group Pipeline project (v1.1). Significant progress has been made in developing the core pipeline, which integrates ASR for transcription and LLMs for summarization, followed by KPI matching for evaluation.
+
+To date, we’ve covered **7 out of 12** required specifications. The top three implemented features include:  
+- Instant audio recording  
+- Upload audio  
+- Upload transcript  
+
+The remaining features, including drag-and-drop functionality, display coverage score, and auto-generated follow-up emails, are prioritized in the next phase.
+
+**Key challenges** include limited access to audio/transcripts due to company policies, simplified KPI data, and the need for robust evaluation datasets. We’re actively testing multiple LLM and ASR tools to ensure reliability.
+
+**Next steps** involve refining the summarization-LLM synergy, improving KPI alignment, and exploring parallel development paths despite data restrictions.
+
+Best regards,  
+[Your Name]

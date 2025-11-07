@@ -1,3 +1,8 @@
+HEAD
 flask
 PyPDF2
 speechrecognition
+python_docx==1.2.0
+Requests==2.32.5
+speechrecognition==3.14.3
+ 4a65dfc2eab229c8673e9e501407bf9cfb292a25

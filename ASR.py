@@ -1,15 +1,10 @@
 # ASR.py
- HEAD
 # Speech recognition with Google API, chunking for long audio, Cantonese support. Added debug prints.
-
-# 重新生成：speech_recognition + Google API，分段處理長音頻。加錯誤處理，支援粵語。
- 4a65dfc2eab229c8673e9e501407bf9cfb292a25
 
 import speech_recognition as sr
 import wave
 import os
 
-<<<<<<< HEAD
 def split_wav_to_chunks(audio_path, chunk_duration=20):
     """
     Split WAV file into chunks.
@@ -44,33 +39,6 @@ def transcribe_audio(audio_path=None, use_mic=False, language="zh-HK", chunk_dur
     Transcribe audio to text. Splits long files.
     """
     print("Debug: Starting transcription...")
-=======
-def split_wav_to_chunks(audio_path, chunk_duration=20):  # 減到 20 秒，提高準度
-    """
-    分段 WAV 文件到 chunks。
-    """
-    chunks = []
-    with wave.open(audio_path, 'rb') as wf:
-        frames = wf.getnframes()
-        rate = wf.getframerate()
-        chunk_length = int(chunk_duration * rate)
-        
-        for i in range(0, frames, chunk_length):
-            wf.setpos(i)
-            chunk_data = wf.readframes(min(chunk_length, frames - i))
-            chunk_file = f"chunk_{len(chunks)}.wav"
-            with wave.open(chunk_file, 'wb') as chunk_wf:
-                chunk_wf.setparams(wf.getparams())
-                chunk_wf.writeframes(chunk_data)
-            chunks.append(chunk_file)
-    
-    return chunks
-
-def transcribe_audio(audio_path=None, use_mic=False, language="zh-HK", chunk_duration=20):  # 改 zh-HK 支援粵語
-    """
-    轉錄音頻。長文件分段。
-    """
->>>>>>> 4a65dfc2eab229c8673e9e501407bf9cfb292a25
     recognizer = sr.Recognizer()
     full_text = ""
     
@@ -333,6 +301,3 @@ def transcribe_audio(audio_path=None, use_mic=False, language="zh-TW"):  # zh-TW
 if __name__ == "__main__":
     # 測試文件：transcribe_audio(audio_path="sample.wav")
    print(transcribe_audio(audio_path="sample.wav", language="zh-TW"))
-
-
->>>>>>> 4a65dfc2eab229c8673e9e501407bf9cfb292a25

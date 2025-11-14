@@ -1,0 +1,86 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html>\
+<head>\
+  <title>Progress Tracker</title>\
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">\
+  <style>\
+    body \{ padding: 2rem; background: #f4f6f9; \}\
+    .upload-box \{ border: 3px dashed #007bff; padding: 2rem; border-radius: 1rem; text-align: center; \}\
+    .progress \{ height: 1.5rem; display: none; \}\
+    .evidence \{ background: #e9f7ef; padding: 0.5rem; border-radius: 0.5rem; margin: 0.5rem 0; \}\
+  </style>\
+</head>\
+<body>\
+  <div class="container">\
+    <h1 class="text-center mb-4">Group Progress Tracker</h1>\
+    \
+    <div class="upload-box">\
+      <p><strong>Upload Audio + PDF Specification</strong></p>\
+      <input type="file" id="audio" accept="audio/*" class="form-control mb-2" />\
+      <input type="file" id="pdf" accept=".pdf" class="form-control mb-2" />\
+      <button onclick="upload()" class="btn btn-primary btn-lg">Process</button>\
+    </div>\
+\
+    <div id="progress" class="progress mt-3">\
+      <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%">Processing...</div>\
+    </div>\
+\
+    <div id="results" class="mt-4"></div>\
+  </div>\
+\
+  <script>\
+    async function upload() \{\
+      const audio = document.getElementById('audio').files[0];\
+      const pdf = document.getElementById('pdf').files[0];\
+      if (!audio || !pdf) return alert("Please select both files!");\
+\
+      document.getElementById('progress').style.display = 'block';\
+      document.getElementById('results').innerHTML = '';\
+\
+      const form = new FormData();\
+      form.append('audio', audio);\
+      form.append('pdf', pdf);\
+\
+      try \{\
+        const res = await fetch('/upload', \{ method: 'POST', body: form \});\
+        const data = await res.json();\
+        if (data.error) throw new Error(data.error);\
+\
+        document.getElementById('progress').style.display = 'none';\
+        document.getElementById('results').innerHTML = `\
+          <div class="card">\
+            <div class="card-header bg-success text-white">\
+              <h4>Coverage: $\{data.coverage\}%</h4>\
+            </div>\
+            <div class="card-body">\
+              <h5>Summary</h5>\
+              <p>$\{data.summary.replace(/\\n/g, '<br>')\}</p>\
+\
+              <h5 class="mt-3 text-success">Covered</h5>\
+              <ul>$\{data.covered.map(i => `<li>$\{i\}</li>`).join('')\}</ul>\
+\
+              <h5 class="mt-3 text-danger">Missing</h5>\
+              <ul>$\{data.missing.map(i => `<li><strong>$\{i\}</strong></li>`).join('')\}</ul>\
+\
+              <h5 class="mt-4">Email Draft</h5>\
+              <textarea class="form-control" rows="8">$\{data.email_draft\}</textarea>\
+\
+              <h5 class="mt-4">Evidence</h5>\
+              $\{data.evidence.map(e => `<div class="evidence">$\{e\}</div>`).join('')\}\
+            </div>\
+          </div>`;\
+      \} catch (e) \{\
+        document.getElementById('progress').style.display = 'none';\
+        document.getElementById('results').innerHTML = `<div class="alert alert-danger">Error: $\{e.message\}</div>`;\
+      \}\
+    \}\
+  </script>\
+</body>\
+</html>}

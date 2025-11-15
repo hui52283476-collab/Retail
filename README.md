@@ -1,5 +1,32 @@
-This Python script is designed to automatically generate a summary of meeting minutes stored in a .docx file using the OpenRouter AI API. Here's a breakdown of what each part does and how it helps you:
+This is a complete end-to-end AI meeting summarization pipeline that turns audio recordings or written meeting notes into a professional summary + follow-up email, all in one click.
 
+
+How to Use It (Simple Steps)
+
+Upload either:
+A .wav audio file (Cantonese/English meeting recording)
+Or a .docx file (meeting minutes/notes)
+
+1. Click "Start"
+2. Wait ~30 seconds
+3. Get output.txt — a full report with:
+Full transcript
+10 AI summaries (from different LLMs)
+The best summary (auto-selected)
+Spec coverage score (how many of your 12 project KPIs are met)
+A ready-to-send follow-up email
+
+What Happens Behind the Scenes (Step-by-Step)
+1. Receives your file (app.py Flask web server)
+2. If .wav → transcribes Cantonese speech to text using Google Speech-to-Text (ASR.py) 
+→ Handles long audio by auto-splitting into 20-sec chunks
+3. If no audio or transcription fails → falls back to .docx and extracts text (summarizer.py)
+4. Sends the transcript to 10 free top-tier LLMs via OpenRouter API: 
+Gemma-2, Llama-3.3-70B, Mistral, Qwen, Moonshot Kimi, etc.
+5. Collects all 10 summaries, picks the longest valid one as the "Best Summary"
+6. Checks the best summary against your 12 project specs (e.g., "ASR transcription", "LLM summary", "email generation") → calculates coverage score
+7. Generates a professional follow-up email with subject, progress, gaps, and next steps
+8. Saves everything to output.txt — clean, structured, ready to send
 
 What the Code Does (Step-by-Step)
 

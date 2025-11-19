@@ -1,0 +1,32 @@
+完整轉錄：
+因為呢我哋 好嗰啲it大嘅機會就乜都好靚喺睇得出係咪就係我哋而家做咗啲嘢都做咗human啦咁就呢個係test嚟㗎嘛就要send去lol因為轉到呀得一個咁甩髮膏 就唯一audio轉曲嘅都失敗咗因為我哋搵唔到其他apps audiobook [聽唔清] [聽唔清] Lightroom [聽唔清] 點樣升import translate 國家牌 你叫佢將嗰個冇叫你將你叫咗張卡嗰邊咁我咪我頭先我用呢啲呢佢係iphone 13幾多電 可能就要問啦咁佢如果ok咁要點呀ok google下一步就係你講我要audio就係咁啦都差唔到audio test啦咁我哋就用一個有一個係得㗎啦係ai可以upload個audio咁我叫佢再再 其他ai會將個曲奇囉即係test轉曲但是中國人咁個問題係個問題喺邊呀就出個呀咁你冇辦法然之後 你話美國mm2係用到audio to the number你之前嗰個落去然之後transfer之前嗰舊嘢囉我哋嗰個project meeting即係有個你你四分鐘四分鐘你搞咗30分鐘嗰個嘢嗰個嘢你要send落出嚟㗎嘛 其他冇得support audio我哋通常會問呢唔係用得 搵airpods之後就搵個app呀然之後嘅如果唔識嘅話就話我想用我想同你我想用呢一個然之後再睇下可唔可以幫我去call佢call reverse唔識點call呢你就可以搵呢兩組佢哋都call咗都做到出嚟拖延咁你 [聽唔清] [聽唔清] [聽唔清] 跟住就 [聽唔清]
+
+1.MoonshotAI 總結：
+API Error (1.MoonshotAI): {"error":{"message":"Provider returned error","code":429,"metadata":{"raw":"moonshotai/kimi-k2:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations","provider_name":"OpenInference"}},"user_id":"user_33Rn7QPmCMNcAyTbrD8Lwi8xlah"}
+
+2.Llama 3.2 3B Instruct  總結：
+I'll summarize the text for you:
+
+The speaker is working on a retail project and is having trouble with audio transcription. They've tried using an app to translate audio, but it's not working. They've also tried using Lightroom, but it's not an option for audio transcription. The speaker is looking for an alternative solution, possibly using AI-powered tools to upload and transcribe audio. They mention that they've tried using "audio to the number" before, but it didn't work out. The speaker is also struggling with pipeline development and KPI matching, and is looking for help to resolve these issues. They mention that they've tried using AirPods, but it's not a viable solution. The speaker is seeking assistance to find a suitable app or tool to help with audio transcription and pipeline development.
+
+3.Google 總結：
+API Error (3.Google): {"error":{"message":"No endpoints found for google/gemma-2-9b-it:free.","code":404},"user_id":"user_33Rn7QPmCMNcAyTbrD8Lwi8xlah"}
+
+4.ArliAI 總結：
+The retail project faces challenges in audio transcription, KPI matching, and pipeline development. The audio transcription process failed due to incompatible apps like audiobook
+
+5.Gemma 3n 2B 總結：
+API Error (5.Gemma 3n 2B): {"error":{"message":"Provider returned error","code":400,"metadata":{"raw":"{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Developer instruction is not enabled for models/gemma-3n-e2b-it\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n","provider_name":"Google AI Studio"}},"user_id":"user_33Rn7QPmCMNcAyTbrD8Lwi8xlah"}
+
+6.Gemma 3 4B 總結：
+API Error (6.Gemma 3 4B): {"error":{"message":"Provider returned error","code":400,"metadata":{"raw":"{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Developer instruction is not enabled for models/gemma-3-4b-it\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n","provider_name":"Google AI Studio"}},"user_id":"user_33Rn7QPmCMNcAyTbrD8Lwi8xlah"}
+
+7.Gemma 3n 4B 總結：
+API Error (7.Gemma 3n 4B): {"error":{"message":"Provider returned error","code":400,"metadata":{"raw":"{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Developer instruction is not enabled for models/gemma-3n-e4b-it\",\n    \"status\": \"INVALID_ARGUMENT\"\n  }\n}\n","provider_name":"Google AI Studio"}},"user_id":"user_33Rn7QPmCMNcAyTbrD8Lwi8xlah"}
+
+8.Tencent 總結：
+API Error (8.Tencent): {"error":{"message":"No endpoints found for tencent/hunyuan-a13b-instruct:free.","code":404},"user_id":"user_33Rn7QPmCMNcAyTbrD8Lwi8xlah"}
+
+9.Agentica 總結：
+API Error (9.Agentica): {"error":{"message":"Provider returned error","code":404,"metadata":{"raw":"{\"detail\":\"model not found: agentica-org/DeepCoder-14B-Preview\"}","provider_name":"Chutes"}},"user_id":"user_33Rn7QPmCMNcAyTbrD8Lwi8xlah"}
+

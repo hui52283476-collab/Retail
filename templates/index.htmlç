@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Group Progress Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { padding: 2rem; background: #f8f9fa; font-family: system-ui; }
+    .upload-zone { border: 3px dashed #007bff; padding: 2rem; text-align: center; border-radius: 1rem; margin-bottom: 2rem; }
+    .progress { height: 1.5rem; display: none; }
+    .evidence { background: #d4edda; padding: 0.5rem; border-radius: 0.5rem; margin: 0.25rem 0; }
+    .missing { background: #f8d7da; color: #721c24; }
+    pre { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">Group Progress Tracker MVP</h1>
+    
+    <div class="upload-zone">
+    <hr class="my-4">
+    <h5 class="text-center">Or: Quick Audio Summary (No PDF)</h5>
+    <input type="file" id="summary_audio" accept="audio/*" class="form-control mb-2">
+    <button onclick="runQuickSummary()" class="btn btn-success btn-lg">Run Summary</button>
+
+      <p><strong>Upload Audio Update + Specification PDF</strong></p>
+      <input type="file" id="audio" accept="audio/*" class="form-control mb-2">
+      <input type="file   const formData = new FormData();
+      formData.append('audio', audio);
+      formData.append('pdf', pdf);
+
+      try {
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        document.getElementById('progress').style.display = 'none';
+        document.getElementById('results').innerHTML = `
+          <div class="card border-success">
+            <div class="card-header bg-success text-white">
+              <h4>Overall Coverage: ${data.coverage}%</h4>
+            </div>
+            <div class="card-body">
+              <h5>Point-Form Summary</h5>
+              <pre class="bg-light p-3 rounded border">${data.summary}</pre>
+
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <h5 class="text-success">Covered Items (${data.covered.length})</h5>
+                  <ul class="list-group">
+                    ${data.covered.map(item => `<li class="list-group-item list-group-item-success">${item}</li>`).join('')}
+                  </ul>
+                </div>
+                <div class="col-md-6">
+                  <h5 class="text-danger">Missing Items (${data.missing.length})</h5>
+                  <ul class="list-group">
+                    ${data.missing.map(item => `<li class="list-group-item list-group-item-danger">${item}</li>`).join('')}
+                  </ul>
+                </div>
+              </div>
+
+              <h5 class="mt-4">Evidence</h5>
+              ${data.evidence.map(e => `<div class="evidence p-2 mb-2">${e}</div>`).join('')}
+
+              <h5 class="mt-4">Follow-up Email Draft</h5>
+              <textarea class="form-control" rows="12" readonly>${data.email_draft}</textarea>
+            </div>
+          </div>`;
+      } catch (error) {
+        document.getElementById('progress').style.display = 'none';
+        document.getElementById('results').innerHTML = `
+          <div class="alert alert-danger">
+            <h5>Error</h5>
+            <p>${error.message}</p>
+            <small>Check Terminal for details.</small>
+          </div>`;
+      }
+    }
+  </script>
+</body>
+</html>

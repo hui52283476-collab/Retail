@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Group Progress Tracker MVP</title>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f8f9fa; }
+    .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #2c3e50; }
+    .section { margin: 30px 0; padding: 20px; border: 2px dashed #3498db; border-radius: 10px; background: #f0f8ff; }
+    .section h3 { margin-top: 0; color: #2980b9; }
+    input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; }
+    button { background: #3498db; color: white; padding: 14px 28px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin: 15px auto; display: block; }
+    button:hover { background: #2980b9; }
+    .quick-btn { background: #27ae60 !important; }
+    .quick-btn:hover { background: #219a52 !important; }
+    .result { margin-top: 25px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f8f9fa; }
+    .error { color: #e74c3c; font-weight: bold; padding: 15px; background: #fadbd8; border-radius: 6px; }
+    pre { background: #eee; padding: 12px; border-radius: 6px; white-space: pre-wrap; font-size: 14px; }
+    .loading { color: #3498db; font-style: italic; text-align: center; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Group Progress Tracker MVP</h1>
+
+    <!-- Quick Audio Summary -->
+    <div class="section">
+      <h3>Or: Quick Audio Summary (No PDF)</h3>
+      <form id="quickForm" action="/run_summary" method="post" enctype="multipart/form-data">
+        <input type="file" name="audio" accept=".wav,.mp3" required>
+        <button type="submit" class="quick-btn">Run Summary</button>
+      </form>
+    </div>
+
+    <!-- Full Progress Update -->
+    <div class="section">
+      <h3>Upload Audio Update + Specification PDF</h3>
+      <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="audio" accept=".wav,.mp3" required>
+        <input type="file" name="pdf" accept=".pdf" required>
+        <button type="submit">Process Update</button>
+      </form>
+    </div>
+
+    <div id="loading" class="loading" style="display:none;">處理中，請稍候...</div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const safeLen = (arr) => Array.isArray(arr) ? arr.length : 0;
+
+    document.getElementById('quickForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const loading = document.getElementById('loading');
+      const result = document.getElementById('result');
+      loading.style.display = 'block';
+      result.innerHTML = '';
+
+      const formData = new FormData(e.target);
+      try {
+        const resp = await fetch('/run_summary', { method: 'POST', body: formData });
+        const data = await resp.json();
+        loading.style.display = 'none';
+
+        if (data.error) {
+          result.innerHTML = `<div class="error">錯誤：${data.error}</div>`;
+          return;
+        }
+
+        let html = `<div class="result">`;
+        html += `<h3>語音轉錄內容</h3><pre>${data.transcription}</pre>`;
+        html += `<h3>LLM 摘要</h3><pre>${data.summary}</pre>`;
+        if (data.all_summaries) {
+          html += `<h3>多模型摘要</h3>`;
+          for (const [model, text] of Object.entries(data.all_summaries)) {
+            html += `<div style="margin:10px 0; padding:10px; background:#f0f0f0; border-radius:5px;">
+              <strong>${model.toUpperCase()}：</strong><pre style="margin:5px 0;">${text}</pre>
+            </div>`;
+          }
+        }
+        html += `</div>`;
+        result.innerHTML = html;
+
+      } catch (err) {
+        loading.style.display = 'none';
+        result.innerHTML = `<div class="error">連線失敗：${err.message}</div>`;
+      }
+    };
+
+    document.getElementById('uploadForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const loading = document.getElementById('loading');
+      const result = document.getElementById('result');
+      loading.style.display = 'block';
+      result.innerHTML = '';
+
+      const formData = new FormData(e.target);
+      try {
+        const resp = await fetch('/upload', { method: 'POST', body: formData });
+        const data = await resp.json();
+        loading.style.display = 'none';
+
+        if (data.error) {
+          result.innerHTML = `<div class="error">錯誤：${data.error}</div>`;
+          return;
+        }
+
+        let html = `<div class="result">`;
+        html += `<h3>語音轉錄內容</h3><pre>${data.transcription}</pre>`;
+        html += `<h3>規格書比對結果（覆蓋率：${data.coverage}%）</h3>`;
+        html += `<p>已覆蓋項目：${safeLen(data.covered)} 項</p>`;
+        html += `<p>遺漏項目：${safeLen(data.missing)} 項</p>`;
+        html += `<ul>`;
+        (data.evidence || []).forEach(e => html += `<li>${e}</li>`);
+        html += `</ul>`;
+        html += `<h3>自動生成郵件</h3><pre style="background:#e8f5e9; padding:15px;">${data.email_draft}</pre>`;
+        html += `</div>`;
+        result.innerHTML = html;
+
+      } catch (err) {
+        loading.style.display = 'none';
+        result.innerHTML = `<div class="error">連線失敗：${err.message}</div>`;
+      }
+    };
+  </script>
+</body>
+</html>

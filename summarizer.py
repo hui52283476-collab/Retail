@@ -6,15 +6,15 @@ import json
 
 # OpenRouter API configuration
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 
 MODELS = [
-    {"name": "1.MoonshotAI", "id": "moonshotai/kimi-k2:free"},
-    {"name": "2.Llama 3.2 3B Instruct ", "id": "meta-llama/llama-3.2-3b-instruct:free"},
-    {"name": "3.Google", "id": "google/gemma-2-9b-it:free"},
-    {"name": "4.ArliAI", "id": "arliai/qwq-32b-arliai-rpr-v1:free"},
-    {"name": "5.Gemma 3n 2B", "id": "google/gemma-3n-e2b-it:free"},
-    {"name": "6.Gemma 3 4B", "id": "google/gemma-3-4b-it:free"},
+    {"name": "1.Coder 32B", "id": "qwen/qwen-2.5-coder-32b-instruct:free"},
+    {"name": "2.Venice", "id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free"},
+    {"name": "3.Qwen", "id": "qwen/qwen2.5-vl-32b-inst  ruct:free"},
+    {"name": "4.Shisa AI", "id": "shisa-ai/shisa-v2-llama3.3-70b:free"},
+    {"name": "5.Qwen2.5 72B ", "id": "qwen/qwen-2.5-72b-instruct:free"},
+    {"name": "6.NVIDIA", "id": "nvidia/nemotron-nano-9b-v2:free"},
     {"name": "7.Gemma 3n 4B", "id": "google/gemma-3n-e4b-it:free"},
     {"name": "8.Tencent", "id": "tencent/hunyuan-a13b-instruct:free"},
     {"name": "9.Agentica", "id": "agentica-org/deepcoder-14b-preview:free"},

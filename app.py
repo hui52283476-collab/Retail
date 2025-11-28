@@ -67,7 +67,6 @@ def upload():
     audio_hash = hashlib.md5(open(audio_path,'rb').read()).hexdigest()[:8]
     seed = hash(audio_hash + str(os.path.getsize(audio_path)))
     random.seed(seed)
-    
     fake_transcripts = [
         f"Recording {audio_hash}: Today we completed ASR with Whisper, summarization is working great with bullet points, email generation done, testing phase in progress.",
         f"Recording {audio_hash}: ASR conversion stable, summarization with LLM ready, specification matching completed, working on frontend upload and testing now.",
@@ -75,7 +74,6 @@ def upload():
         f"Recording {audio_hash}: Full progress: ASR done, summarization excellent, PDF matching 100%, email auto-draft ready, backend storage implemented, testing ongoing.",
     ]
     transcription = random.choice(fake_transcripts)
-
     checklist = extract_checklist(pdf_path)
     summary = professional_summary_en(transcription)
 
@@ -83,7 +81,6 @@ def upload():
     transcript_lower = transcription.lower()
     covered = []
     missing = []
-
     keyword_map = {
         "asr": ["asr", "whisper", "conversion", "speech", "audio to text"],
         "summarization": ["summar", "bullet", "point", "summary", "llm"],
@@ -109,17 +106,16 @@ def upload():
             missing.append(item)
 
     coverage = round(len(covered) / len(checklist) * 100, 1) if checklist else 0
+    coverage_display = f"{coverage}%" if checklist else "0%"   # 新增：給結果欄顯示用的百分比字串
 
     email = f"""Subject: Retail Project Progress Update - {datetime.now():%Y-%m-%d}
 
 Meeting Summary:
 {summary}
 
-Specification Coverage: {coverage}% ({len(covered)}/{len(checklist)})
-
+Specification Coverage: {coverage_display} ({len(covered)}/{len(checklist)})
 Completed Items:
 {"".join(f"• {x}\n" for x in covered) if covered else "• None"}
-
 Pending Items:
 {"".join(f"• {x}\n" for x in missing) if missing else "• None"}
 
@@ -129,7 +125,8 @@ Progress Tracker Bot"""
     return jsonify({
         "transcription": transcription,
         "summary": summary,
-        "coverage": coverage,
+        "coverage": coverage,                    # 原本就有的數字（給進度條用）
+        "coverage_display": coverage_display,    # ← 新增：結果欄直接顯示「95.0%」
         "covered_count": len(covered),
         "total_items": len(checklist),
         "covered": covered,

@@ -120,7 +120,7 @@ Pending Items:
 {"".join(f"• {x}\n" for x in missing) if missing else "• None"}
 
 Best regards,
-Progress Tracker Bot"""
+Progress Tracker Bot
 
     return jsonify({
         "transcription": transcription,

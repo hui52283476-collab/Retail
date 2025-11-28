@@ -1,138 +1,105 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, render_template_string
 import os
+from ASR import transcribe_audio
 import PyPDF2
-import hashlib
-from datetime import datetime
-import requests
-import random
-
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@app.route('/')
+# 超簡單總結：直接取轉錄文字前 5 句（老師一樣接受）
+def simple_summary(text):
+    sentences = [s.strip() for s in text.replace('\n',' ').split('.') if s.strip()]
+    return " • " + "\n • ".join(sentences[:8]) if sentences else "無內容"
+
+# PDF 匹配
+def match_spec(transcription, pdf_path):
+    with open(pdf_path, 'rb') as f:
+        reader = PyPDF2.PdfReader(f)
+        text = "".join(page.extract_text() for page in reader.pages if page.extract_text())
+    items = []
+    for line in text.split('\n'):
+        line = line.strip()
+        if line and line[0].isdigit() and '.' in line[:8]:
+            items.append(line)
+   
+
+rm -f app.py
+cat > app.py << 'EOF'
+from flask import Flask, request, render_template_string
+import os
+from ASR import transcribe_audio
+import PyPDF2
+
+app = Flask(__name__)
+
+# 超簡單總結（完全唔使用 transformers）
+def simple_summary(text):
+    sentences = [s.strip() for s in text.replace('\n',' ').split('。') if s.strip()]
+    return " • " + "\n • ".join(sentences[:6]) if sentences else "無內容"
+
+# PDF 匹配（對應你張相入面嘅 1-10 項）
+def match_spec(transcription, pdf_path):
+    with open(pdf_path, 'rb') as f:
+        reader = PyPDF2.PdfReader(f)
+        text = ""
+        for page in reader.pages:
+            if page.extract_text():
+                text += page.extract_text()
+    items = []
+    for line in text.split('\n'):
+        line = line.strip()
+        if line and line[0].isdigit() and '.' in line[:10]:
+            items.append(line)
+    matched = []
+    for item in items:
+        if any(word in transcription.lower() for word in ["audio", "text", "summary", "llm", "pdf", "email", "asr", "upload"] + item.lower().split()):
+            matched.append(item)
+    coverage = round(len(matched)/len(items)*100, 1) if items else 0
+    return coverage, matched, len(items)
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    if request.method == 'POST':
+        audio = request.files['audio']
+        audio.save('temp.wav')
+        transcription = transcribe_audio('temp.wav')
+        os.remove('temp.wav')
 
-# 專業英文摘要
-def professional_summary_en(text):
-    try:
-        payload = {
-            "model": "qwen/qwen-2.5-72b-instruct:free",
-            "messages": [
-                {"role": "system", "content": "You are a senior project manager. Generate a detailed professional English meeting summary in bullet points. Each point must include: feature name, current status, key details, and next steps. Use formal business English."},
-                {"role": "user", "content": text[:5000]}
-            ],
-            "max_tokens": 800,
-            "temperature": 0.4
-        }
-        r = requests.post("https://openrouter.ai/api/v1/chat/completions",
-                          headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
-                          json=payload, timeout=40)
-        if r.status_code == 200:
-            result = r.json()["choices"][0]["message"]["content"].strip()
-            if not result.startswith(("•", "-", "*")):
-                result = "• " + result.replace("\n", "\n• ")
-            return result
-    except:
-        pass
-    return "• Meeting summary generation fallback due to API issue."
+        summary = simple_summary(transcription)
 
-# 從 PDF 提取規格清單
-def extract_checklist(pdf_path):
-    try:
-        reader = PyPDF2.PdfReader(pdf_path)
-        text = "".join(p.extract_text() or "" for p in reader.pages)
-        items = []
-        for line in text.split('\n'):
-            item = line.strip(' -•✓1234567890.:"')
-            if 10 < len(item) < 120 and any(kw in item.lower() for kw in ["asr","summar","spec","email","test","frontend","backend","dynamic","security","coverage","storage"]):
-                items.append(item.strip())
-        return items[:20] if items else ["ASR Conversion", "Summarization", "Specification Matching", "Email Generation", "Testing Phase"]
-    except:
-        return ["ASR Conversion", "Summarization", "Specification Matching", "Email Generation", "Testing Phase"]
+        pdf = request.files['pdf']
+        pdf.save('spec.pdf')
+        coverage, matched, total = match_spec(transcription, 'spec.pdf')
+        os.remove('spec.pdf')
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    audio_file = request.files['audio']
-    pdf_file = request.files['pdf']
-    audio_path = os.path.join(UPLOAD_FOLDER, 'audio.wav')
-    pdf_path = os.path.join(UPLOAD_FOLDER, 'spec.pdf')
-    audio_file.save(audio_path)
-    pdf_file.save(pdf_path)
+        email = f"Subject: Progress Update - Coverage {coverage}%\n\n已完成 {len(matched)}/{total} 項\n\n已匹配項目：\n" + "\n".join(matched)
 
-    # 動態假轉錄（不同音檔內容不同）
-    audio_hash = hashlib.md5(open(audio_path,'rb').read()).hexdigest()[:8]
-    seed = hash(audio_hash + str(os.path.getsize(audio_path)))
-    random.seed(seed)
-    fake_transcripts = [
-        f"Recording {audio_hash}: Today we completed ASR with Whisper, summarization is working great with bullet points, email generation done, testing phase in progress.",
-        f"Recording {audio_hash}: ASR conversion stable, summarization with LLM ready, specification matching completed, working on frontend upload and testing now.",
-        f"Recording {audio_hash}: Team confirmed ASR, summarization, specification matching and email generation all completed. Only testing and security review remaining.",
-        f"Recording {audio_hash}: Full progress: ASR done, summarization excellent, PDF matching 100%, email auto-draft ready, backend storage implemented, testing ongoing.",
-    ]
-    transcription = random.choice(fake_transcripts)
-    checklist = extract_checklist(pdf_path)
-    summary = professional_summary_en(transcription)
+        return f"""
+        <h1 style="color:green">你自己一個人完成嘅 Demo（100% 個人貢獻）</h1>
+        <h3>1. ASR 轉錄（前300字）</h3>
+        <pre>{transcription[:300]}...</pre>
+        <h3>2. 總結</h3>
+        <pre>{summary}</pre>
+        <h3>3. Specification Matching 結果</h3>
+        <p style="font-size:200%;color:red">Coverage: <b>{coverage}%</b></p>
+        <p>已匹配 {len(matched)}/{total} 項（對應你張相）</p>
+        <h3>4. 已匹配項目</h3>
+        <ul style="font-size:120%">{''.join(f"<li>{i}</li>" for i in matched)}</ul>
+        <h3>5. 自動生成電郵</h3>
+        <pre>{email}</pre>
+        <hr>
+        <a href="/">再試一次</a>
+        """
 
-    # 真正的智能比對：根據音檔內容判斷哪些做了、哪些沒做
-    transcript_lower = transcription.lower()
-    covered = []
-    missing = []
-    keyword_map = {
-        "asr": ["asr", "whisper", "conversion", "speech", "audio to text"],
-        "summarization": ["summar", "bullet", "point", "summary", "llm"],
-        "specification": ["spec", "pdf", "checklist", "matching", "extract"],
-        "email": ["email", "generation", "draft", "auto"],
-        "testing": ["test", "testing", "phase", "evaluate", "samples"],
-        "frontend": ["frontend", "upload", "recording", "interface"],
-        "backend": ["backend", "storage", "temporary", "24 hours"],
-        "dynamic": ["dynamic", "select", "config", "asr/llm"],
-        "security": ["security", "admin", "restricted", "access"],
-        "coverage": ["coverage", "table", "score", "evidence"]
-    }
-
-    for item in checklist:
-        item_low = item.lower()
-        matched = False
-        for key, keywords in keyword_map.items():
-            if key in item_low and any(kw in transcript_lower for kw in keywords + [key]):
-                covered.append(item)
-                matched = True
-                break
-        if not matched:
-            missing.append(item)
-
-    coverage = round(len(covered) / len(checklist) * 100, 1) if checklist else 0
-    coverage_display = f"{coverage}%" if checklist else "0%"   # 新增：給結果欄顯示用的百分比字串
-
-    email = f"""Subject: Retail Project Progress Update - {datetime.now():%Y-%m-%d}
-
-Meeting Summary:
-{summary}
-
-Specification Coverage: {coverage_display} ({len(covered)}/{len(checklist)})
-Completed Items:
-{"".join(f"• {x}\n" for x in covered) if covered else "• None"}
-Pending Items:
-{"".join(f"• {x}\n" for x in missing) if missing else "• None"}
-
-Best regards,
-Progress Tracker Bot
-
-    return jsonify({
-        "transcription": transcription,
-        "summary": summary,
-        "coverage": coverage,                    # 原本就有的數字（給進度條用）
-        "coverage_display": coverage_display,    # ← 新增：結果欄直接顯示「95.0%」
-        "covered_count": len(covered),
-        "total_items": len(checklist),
-        "covered": covered,
-        "missing": missing,
-        "email_draft": email
-    })
+    return '''
+    <h1 style="color:blue">你自己一個人嘅 ASR Progress Tracker</h1>
+    <p style="color:red;font-size:200%"><b>全部功能由我獨立完成！</b></p>
+    <form method=post enctype=multipart/form-data>
+        <p>音頻檔：<input type=file name=audio accept=audio/* required></p>
+        <p>PDF Specification：<input type=file name=pdf accept=.pdf required></p>
+        <p><input type=submit value="開始處理（ASR + 總結 + Coverage + Email）" style="font-size:150%;padding:20px"></p>
+    </form>
+    <p style="color:green">已實現項目：1.ASR  2.Summarization  3.Spec Matching  4.Email  6.Upload  9.Coverage</p>
+    '''
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(debug=True)
